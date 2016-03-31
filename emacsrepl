@@ -13,4 +13,4 @@ repl() {
     pkill -u "$USER" -P "$$" -x od
 }
 
-stdbuf -oL od -w1 -An -tx1 -v | sed -u -e 's/^ //' | repl
+stdbuf -oL od -w1 -An -tx1 -v | repl
