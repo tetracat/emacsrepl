@@ -1,0 +1,64 @@
+* Basics [0/6]
+
+** TODO Modularization
+
+This would allow for a less hacky shell script:
+
+#+BEGIN_SRC shell
+emacs -Q --batch -l foo.el -l bar.el -f repl
+#+END_SRC
+
+Candidates:
+
+- readline.el
+- repl.el
+
+** TODO History support
+
+- Save successful (not cancelled or erroneous) to a history ring
+- Recognize =C-p= / =<up>= and =C-n= / =<down>=
+
+** TODO Persistent history
+
+- Save history to file after quitting
+- Load history from file after start
+- Support a hardcoded file location
+- Support an environment variable
+
+** TODO Support multi-byte encodings
+
+- Add =iconv= to the pipeline and output as UTF-32
+- Dump four bytes at a time with =od=
+- Put four bytes into a UTF-32 buffer
+- Convert buffer contents into the shell encoding (saved into an
+  environment variable by the shell script?)
+- Use result as char sequence
+
+** TODO Dumb mode
+
+Not everything supports our fancy control codes.  It would be better
+to check =TERM= and disable printing them for dumb terminals.
+
+** TODO Support all linenoise bindings
+
+* Nice to have [0/9]
+
+** TODO Quoted insert
+
+** TODO User file
+
+** TODO Indentation
+
+** TODO Continuation prompts
+
+** TODO Multi-line editing
+
+** TODO Better error messages
+
+** TODO Completion
+
+** TODO History search
+
+** TODO Syntax highlighting
+
+** TODO Pretty-printing
