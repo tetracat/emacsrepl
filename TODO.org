@@ -41,9 +41,11 @@ to check =TERM= and disable printing them for dumb terminals.
 
 ** TODO Support all linenoise bindings
 
-* Nice to have [0/9]
+* Nice to have [0/13]
 
 ** TODO Quoted insert
+
+** TODO Bracketed paste
 
 ** TODO User file
 
@@ -52,6 +54,8 @@ to check =TERM= and disable printing them for dumb terminals.
 ** TODO Continuation prompts
 
 ** TODO Multi-line editing
+
+** TODO Paredit
 
 ** TODO Better error messages
 
@@ -62,3 +66,5 @@ to check =TERM= and disable printing them for dumb terminals.
 ** TODO Syntax highlighting
 
 ** TODO Pretty-printing
+
+** TODO "Comma" commands
