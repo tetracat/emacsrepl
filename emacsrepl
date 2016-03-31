@@ -1,13 +1,16 @@
-#!/bin/bash
+#!/bin/sh
+# emacsrepl - Interactive CLI REPL for Emacs Lisp
 
-OLD=$(stty -g)
+trap 'stty "$restore"' EXIT
+
+restore=$(stty -g)
 stty raw -echo opost
-trap 'stty "$OLD"' EXIT
 
-SCRIPT="$(dirname $0)/emacsrepl.el"
-run_repl () {
-  emacs -Q --batch --load "$SCRIPT"
-  pkill -P $$ -x od
+script=${0%/*}/emacsrepl.el
+
+repl() {
+    emacs -Q --batch --load "$script"
+    pkill -u "$USER" -P "$$" -x od
 }
 
-stdbuf -oL od -w1 -An -tx1 -v | sed -u -e 's/^ //' | run_repl
+stdbuf -oL od -w1 -An -tx1 -v | sed -u -e 's/^ //' | repl
