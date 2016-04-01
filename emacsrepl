@@ -1,11 +1,6 @@
 #!/bin/sh
 # emacsrepl - Interactive CLI REPL for Emacs Lisp
 
-trap 'stty "$restore"' EXIT
-
-restore=$(stty -g)
-stty raw -echo opost
-
 script=${0%/*}/emacsrepl.el
 
 repl() {
@@ -13,4 +8,13 @@ repl() {
     pkill -u "$USER" -P "$$" -x od
 }
 
-stdbuf -oL od -w1 -An -tx1 -v | repl
+if [[ "$TERM" == dumb || "$TERM" == cons25 || "$TERM" == emacs ]]; then
+    emacs -Q --batch --load "$script"
+else
+    trap 'stty "$restore"' EXIT
+
+    restore=$(stty -g)
+    stty raw -echo opost
+
+    stdbuf -oL od -w1 -An -tx1 -v | repl
+fi

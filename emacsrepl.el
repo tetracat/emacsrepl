@@ -149,9 +149,12 @@
   (let ((form (read input)))
     (prin1-to-string (eval form))))
 
+(defun emacs-read-line (prompt)
+  (ignore-errors (read-from-minibuffer prompt)))
+
 (defvar readline-function
   (if (member (getenv "TERM") '("dumb" "cons25" "emacs"))
-      'read-from-minibuffer
+      'emacs-read-line
     'read-line))
 
 (defun repl ()
