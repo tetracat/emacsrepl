@@ -149,11 +149,16 @@
   (let ((form (read input)))
     (prin1-to-string (eval form))))
 
+(defvar readline-function
+  (if (member (getenv "TERM") '("dumb" "cons25" "emacs"))
+      'read-from-minibuffer
+    'read-line))
+
 (defun repl ()
   (let (eof)
     (while (not eof)
       (condition-case err
-          (let ((line (read-line "EMACS> ")))
+          (let ((line (funcall readline-function "EMACS> ")))
             (if line
                 (princ (format "%s\n" (rep line)))
               (princ "\n")

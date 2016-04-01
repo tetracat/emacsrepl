@@ -1,4 +1,4 @@
-* Basics [0/6]
+* Basics [1/6]
 
 ** TODO Modularization
 
@@ -34,7 +34,7 @@ Candidates:
   environment variable by the shell script?)
 - Use result as char sequence
 
-** TODO Dumb mode
+** DONE Dumb mode
 
 Not everything supports our fancy control codes.  It would be better
 to check =TERM= and disable printing them for dumb terminals.
