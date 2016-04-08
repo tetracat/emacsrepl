@@ -1,15 +1,15 @@
 #!/bin/sh
 # emacsrepl - Interactive CLI REPL for Emacs Lisp
 
-script=${0%/*}/emacsrepl.el
+scriptdir=${0%/*}
 
 repl() {
-    emacs -Q --batch --load "$script"
+    emacs -Q --batch --load "$scriptdir/utf8-decode.el" --load "$scriptdir/emacsrepl.el"
     pkill -u "$USER" -P "$$" -x od
 }
 
 if [[ "$TERM" == dumb || "$TERM" == cons25 || "$TERM" == emacs ]]; then
-    emacs -Q --batch --load "$script"
+    emacs -Q --batch --load "$scriptdir/emacsrepl.el"
 else
     trap 'stty "$restore"' EXIT
 

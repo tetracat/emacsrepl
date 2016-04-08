@@ -28,13 +28,27 @@
 (defun read-byte ()
   (string-to-number (read-from-minibuffer "") 16))
 
+(defun read-utf8-char ()
+  (let ((state 0)
+        (codepoint 0)
+        complete decoded)
+    (while (not complete)
+      (setq decoded (decode state codepoint (read-byte)))
+      (setq state (car decoded))
+      (setq codepoint (cdr decoded))
+      (cond ((= state utf8_accept)
+             (setq complete t))
+            ((= state utf8_reject)
+             (setq state 0))))
+    codepoint))
+
 (defun read-sequence ()
   ;; TODO test out `locale charmap` and `iconv -t UTF-32 -`
   ;; NOTE how would one convert from utf-32 to utf-8 though?
   (let ((state 'start)
         char output)
     (while (not (eq state 'end))
-      (setq char (read-byte))
+      (setq char (read-utf8-char))
       (push char output)
       (cond
        ((eq state 'start)
@@ -52,7 +66,7 @@
     (concat (nreverse output))))
 
 (defun char-unprintable-p (char)
-  (or (< char ?\s) (>= char ?\C-?)))
+  (< char ?\s))
 
 (defun printed-representation (chars)
   (mapconcat
