@@ -21,10 +21,12 @@
 ;; CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
 
-(defconst utf8_accept 0)
-(defconst utf8_reject 1)
+;; http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
-(defconst utf8d [
+(defconst utf8-accept 0)
+(defconst utf8-reject 1)
+
+(defconst utf8-decode [
   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0  ; 00..1f
   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0  ; 20..3f
   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0  ; 40..5f
@@ -41,10 +43,10 @@
   1 3 1 1 1 1 1 3 1 3 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1  ; s7..s8
   ])
 
-(defun decode (state codep byte)
-  (let* ((type (elt utf8d byte))
-         (new-codep (if (not (= state utf8_accept))
-                       (logior (logand byte #x3f) (lsh codep 6))
-                     (logand (lsh #xff (- type)) byte)))
-         (new-state (elt utf8d (+ 256 (* state 16) type))))
-    (cons new-state new-codep)))
+(defun utf8-decode (state code-point byte)
+  (let* ((type (elt utf8-decode byte))
+         (code-point (if (not (= state utf8-accept))
+                             (logior (logand byte #x3f) (lsh code-point 6))
+                           (logand (lsh #xff (- type)) byte)))
+         (state (elt utf8-decode (+ 256 (* state 16) type))))
+    (cons state code-point)))

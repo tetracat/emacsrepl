@@ -25,22 +25,33 @@
 (defvar advance-cursor "\e[%sC")
 (defvar clear-screen "\e[H\e[2J")
 
+;; TODO turn into a defcustom after namespacing
+(defvar decode-utf8 t)
+(defvar read-char-function
+  (if decode-utf8
+      'read-utf8-char
+    'read-byte))
+
 (defun read-byte ()
   (string-to-number (read-from-minibuffer "") 16))
 
 (defun read-utf8-char ()
   (let ((state 0)
-        (codepoint 0)
+        (code-point 0)
         complete decoded)
     (while (not complete)
-      (setq decoded (decode state codepoint (read-byte)))
-      (setq state (car decoded))
-      (setq codepoint (cdr decoded))
-      (cond ((= state utf8_accept)
-             (setq complete t))
-            ((= state utf8_reject)
-             (setq state 0))))
-    codepoint))
+      (setq decoded (utf8-decode state code-point (read-byte))
+            state (car decoded)
+            code-point (cdr decoded))
+      (cond
+       ((= state 0)
+        (setq complete t))
+       ((= state 1) ; fail gracefully for single-byte compatibility
+        (setq state 0))
+       (t
+        ;; continue decoding non-trivial sequences
+        )))
+    code-point))
 
 (defun read-sequence ()
   ;; TODO test out `locale charmap` and `iconv -t UTF-32 -`
@@ -48,7 +59,7 @@
   (let ((state 'start)
         char output)
     (while (not (eq state 'end))
-      (setq char (read-utf8-char))
+      (setq char (funcall read-char-function))
       (push char output)
       (cond
        ((eq state 'start)
