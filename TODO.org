@@ -1,4 +1,4 @@
-* Basics [1/6]
+* Basics [2/6]
 
 ** TODO Modularization
 
@@ -25,6 +25,29 @@ Candidates:
 - Support a hardcoded file location
 - Support an environment variable
 
+** DONE Dumb mode
+
+Not everything supports our fancy control codes.  It would be better
+to check =TERM= and disable printing them for dumb terminals.
+
+** DONE Support UTF-8
+
+- Extend the state machine to handle UTF-8 sequences
+- Convert a recognized UTF-8 sequence into a multibyte character
+- Print multi-byte characters
+- Downside: other multi-byte encodings will be turned into even
+  weirder gibberish than before
+
+** TODO Support all linenoise bindings
+
+- =C-t= (swap previous and current char, advance cursor by one)
+- =C-p/C-n= (prev/next history item)
+- =C-u= (delete entire line)
+- =C-k= (delete to end)
+- =C-w= (delete previous word)
+
+* Nice to have [0/14]
+
 ** TODO Support multi-byte encodings
 
 - Add =iconv= to the pipeline and output as UTF-32
@@ -33,15 +56,6 @@ Candidates:
 - Convert buffer contents into the shell encoding (saved into an
   environment variable by the shell script?)
 - Use result as char sequence
-
-** DONE Dumb mode
-
-Not everything supports our fancy control codes.  It would be better
-to check =TERM= and disable printing them for dumb terminals.
-
-** TODO Support all linenoise bindings
-
-* Nice to have [0/13]
 
 ** TODO Quoted insert
 
@@ -54,6 +68,8 @@ to check =TERM= and disable printing them for dumb terminals.
 ** TODO Continuation prompts
 
 ** TODO Multi-line editing
+
+** TODO Undo
 
 ** TODO Paredit
 
