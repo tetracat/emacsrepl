@@ -54,8 +54,6 @@
     code-point))
 
 (defun read-sequence ()
-  ;; TODO test out `locale charmap` and `iconv -t UTF-32 -`
-  ;; NOTE how would one convert from utf-32 to utf-8 though?
   (let ((state 'start)
         char output)
     (while (not (eq state 'end))
@@ -152,6 +150,27 @@
                 (princ (buffer-substring (1+ (point)) (point-max)))
                 (princ (format retreat-cursor (- (point-max) (1+ (point))))))
               (delete-char 1)))
+           ((equal chars "\C-k")
+            (when (not (eobp))
+              (delete-region (point) (point-max))
+              (princ delete-to-end)))
+           ((equal chars "\C-u")
+            (when (not (zerop (buffer-size)))
+              (erase-buffer)
+              (princ column-start)
+              (princ (format advance-cursor (length prompt)))
+              (princ delete-to-end)))
+           ((equal chars "\C-w")
+            (when (not (bobp))
+              (let ((word-beg (save-excursion
+                                (forward-word -1)
+                                (point))))
+                (princ (format retreat-cursor (- (point) word-beg)))
+                (princ delete-to-end)
+                (when (not (eobp))
+                  (princ (buffer-substring (point) (point-max)))
+                  (princ (format retreat-cursor (- (point-max) (point)))))
+                (delete-region word-beg (point)))))
            ((or (equal chars "\C-j")
                 (equal chars "\C-m"))
             (princ "\n")
@@ -167,10 +186,8 @@
                 (princ (buffer-substring (point) (point-max)))
                 (princ (format retreat-cursor (- (point-max) (point)))))
               (insert representation))))))
-        (if return
-            (buffer-string)
-          nil))))
-
+      (when return
+        (buffer-string)))))
 
 (defun rep (input)
   (let ((form (read input)))
