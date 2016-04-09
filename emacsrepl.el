@@ -190,7 +190,10 @@
       (condition-case err
           (let ((line (funcall readline-function "EMACS> ")))
             (if line
-                (princ (format "%s\n" (rep line)))
+                (if (zerop (length line))
+                    ;; treat empty line like C-c
+                    (signal 'readline-cancel nil)
+                  (princ (format "%s\n" (rep line))))
               (princ "\n")
               (setq eof t)))
         (readline-cancel) ; proceed with new prompt
