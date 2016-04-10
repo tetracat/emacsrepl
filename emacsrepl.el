@@ -219,13 +219,16 @@
       'emacs-read-line
     'read-line))
 
+(defvar blank-or-comment-re
+  (rx bos (* space) (? (: ";" (* any))) eos))
+
 (defun repl ()
   (let (eof)
     (while (not eof)
       (condition-case err
           (let ((line (funcall readline-function "EMACS> ")))
             (if line
-                (if (zerop (length line))
+                (if (string-match-p blank-or-comment-re line)
                     ;; treat empty line like C-c
                     (signal 'readline-cancel nil)
                   (princ (format "%s\n" (rep line))))
