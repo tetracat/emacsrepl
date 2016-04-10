@@ -60,6 +60,12 @@ to check =TERM= and disable printing them for dumb terminals.
 
 ** TODO Multi-line editing
 
+Currently editing a line longer than the terminal width results in
+undefined behaviour, typically printing beyond it will work, but
+deleting only affect the visual continuation line...
+
+Take a look at how the linenoise multi-line algorithm works for this.
+
 ** TODO Undo
 
 ** TODO Paredit
