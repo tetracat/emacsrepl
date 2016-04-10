@@ -48,15 +48,6 @@ to check =TERM= and disable printing them for dumb terminals.
 
 * Nice to have [0/14]
 
-** TODO Support multi-byte encodings
-
-- Add =iconv= to the pipeline and output as UTF-32
-- Dump four bytes at a time with =od=
-- Put four bytes into a UTF-32 buffer
-- Convert buffer contents into the shell encoding (saved into an
-  environment variable by the shell script?)
-- Use result as char sequence
-
 ** TODO Quoted insert
 
 ** TODO Bracketed paste
