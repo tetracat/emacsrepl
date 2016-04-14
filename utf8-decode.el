@@ -50,3 +50,5 @@
                            (logand (lsh #xff (- type)) byte)))
          (state (elt utf8-decode (+ 256 (* state 16) type))))
     (cons state code-point)))
+
+(provide 'utf8-decode)

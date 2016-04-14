@@ -1,6 +1,6 @@
-* Basics [5/6]
+* Basics [6/6]
 
-** TODO Modularization
+** DONE Modularization
 
 This would allow for a less hacky shell script:
 
