@@ -93,7 +93,12 @@
 
 (define-error 'readline-cancel "Input cancelled")
 
-(defvar input-history-file "~/.emacsrepl_history")
+(defvar input-history-file
+  (let ((data-home (getenv "XDG_DATA_HOME")))
+    (if (and data-home (= (aref data-home 0) ?/))
+        (concat data-home "emacsrepl/history")
+      (expand-file-name "~/.local/share/emacsrepl/history"))))
+
 (defvar input-history-size 100)
 (defvar input-history-index 0)
 (defvar input-history (make-ring input-history-size))
@@ -113,6 +118,9 @@ will be performed."
       (aset vec (ring-index index hd ln (length vec)) item))))
 
 (defun input-history-dump (file)
+  (let ((base-dir (file-name-directory file)))
+    (when (not (file-exists-p base-dir))
+      (make-directory base-dir)))
   (with-temp-file file
     (dolist (item (nreverse (ring-elements input-history)))
       (insert (format "%s\n" item)))))
