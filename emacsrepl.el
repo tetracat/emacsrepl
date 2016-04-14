@@ -81,13 +81,7 @@
   (mapconcat
    (lambda (char)
      (if (char-unprintable-p char)
-         (cond
-          ((< char ?\s)
-           (format "^%c" (logior char 64)))
-          ((= char ?\C-?)
-           "^?")
-          ((> char ?\C-?)
-           (format "\\%o" char)))
+         (format "^%c" (logior char 64))
        (format "%c" char)))
    chars ""))
 
