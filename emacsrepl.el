@@ -265,8 +265,10 @@ will be performed."
 (defun emacs-read-line (prompt)
   (ignore-errors (read-from-minibuffer prompt)))
 
+(defvar dumb-term-p (member (getenv "TERM") '("dumb" "cons25" "emacs")))
+
 (defvar readline-function
-  (if (member (getenv "TERM") '("dumb" "cons25" "emacs"))
+  (if dumb-term-p
       'emacs-read-line
     'read-line))
 
@@ -282,7 +284,8 @@ will be performed."
                 (if (string-match-p blank-or-comment-re line)
                     ;; treat empty line like C-c
                     (signal 'readline-cancel nil)
-                  (ring-insert input-history line)
+                  (when (not dumb-term-p)
+                    (ring-insert input-history line))
                   (princ (format "%s\n" (rep line))))
               (princ "\n")
               (setq eof t)))
