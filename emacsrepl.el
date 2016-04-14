@@ -115,7 +115,7 @@ will be performed."
   (with-temp-buffer
     (princ prompt)
     (let (eol return)
-      (ring-insert input-history nil) ; scratch entry
+      (ring-insert input-history "") ; scratch entry
       (while (not (or eol return))
         (let* ((chars (read-sequence)))
           (cond
