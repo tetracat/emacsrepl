@@ -93,6 +93,7 @@
 
 (define-error 'readline-cancel "Input cancelled")
 
+(defvar input-history-file "~/.emacsrepl_history")
 (defvar input-history-size 100)
 (defvar input-history-index 0)
 (defvar input-history (make-ring input-history-size))
@@ -110,6 +111,21 @@ will be performed."
 	  (ln (cadr ring))
 	  (vec (cddr ring)))
       (aset vec (ring-index index hd ln (length vec)) item))))
+
+(defun input-history-dump (file)
+  (with-temp-file file
+    (dolist (item (nreverse (ring-elements input-history)))
+      (insert (format "%s\n" item)))))
+
+(defun input-history-load (file)
+  (with-temp-buffer
+    (insert-file-contents-literally file)
+    (goto-char (point-min))
+    (while (not (eobp))
+      (let ((line (buffer-substring (line-beginning-position)
+                                    (line-end-position))))
+        (ring-insert input-history line)
+        (forward-line 1)))))
 
 (defun read-line (prompt)
   (with-temp-buffer
@@ -277,6 +293,8 @@ will be performed."
 
 (defun repl ()
   (let (eof)
+    (when (and (not dumb-term-p) (file-exists-p input-history-file))
+      (input-history-load input-history-file))
     (while (not eof)
       (condition-case err
           (let ((line (funcall readline-function "EMACS> ")))
@@ -291,6 +309,8 @@ will be performed."
               (setq eof t)))
         (readline-cancel) ; proceed with new prompt
         (error
-         (princ (format "%s\n" (error-message-string err))))))))
+         (princ (format "%s\n" (error-message-string err))))))
+    (when (not dumb-term-p)
+      (input-history-dump input-history-file))))
 
 (repl)
