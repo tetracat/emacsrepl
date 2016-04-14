@@ -93,10 +93,29 @@
 
 (define-error 'readline-cancel "Input cancelled")
 
+(defvar input-history-size 100)
+(defvar input-history-index 0)
+(defvar input-history (make-ring input-history-size))
+
+;; not sure why that's not a thing...
+(defun ring-set (ring index item)
+  "Set RING's INDEX element to ITEM.
+INDEX = 0 is the most recently inserted; higher indices
+correspond to older elements.
+INDEX need not be <= the ring length; the appropriate modulo operation
+will be performed."
+  (if (ring-empty-p ring)
+      (error "Accessing an empty ring")
+    (let ((hd (car ring))
+	  (ln (cadr ring))
+	  (vec (cddr ring)))
+      (aset vec (ring-index index hd ln (length vec)) item))))
+
 (defun read-line (prompt)
   (with-temp-buffer
     (princ prompt)
     (let (eol return)
+      (ring-insert input-history nil) ; scratch entry
       (while (not (or eol return))
         (let* ((chars (read-sequence)))
           (cond
@@ -104,6 +123,34 @@
             (princ clear-screen)
             (princ prompt)
             (princ (buffer-string)))
+           ((or (equal chars "\C-p")
+                (equal chars "\e[A")) ; <up>
+            (let ((input-history-length (ring-length input-history)))
+              (when (and (> input-history-length 1)
+                         (< input-history-index (1- input-history-length)))
+                (ring-set input-history input-history-index (buffer-string))
+                (setq input-history-index (1+ input-history-index))
+                (let ((prev-item (ring-ref input-history input-history-index)))
+                  (princ column-start)
+                  (princ delete-to-end)
+                  (princ prompt)
+                  (princ prev-item)
+                  (erase-buffer)
+                  (insert prev-item)))))
+           ((or (equal chars "\C-n")
+                (equal chars "\e[B")) ; <down>
+            (let ((input-history-length (ring-length input-history)))
+              (when (and (> input-history-length 1)
+                         (> input-history-index 0))
+                (ring-set input-history input-history-index (buffer-string))
+                (setq input-history-index (1- input-history-index))
+                (let ((next-item (ring-ref input-history input-history-index)))
+                  (princ column-start)
+                  (princ delete-to-end)
+                  (princ prompt)
+                  (princ next-item)
+                  (erase-buffer)
+                  (insert next-item)))))
            ((or (equal chars "\C-b")
                 (equal chars "\e[D")) ; <left>
             (when (not (bobp))
@@ -138,7 +185,9 @@
               (delete-char -1)))
            ((equal chars "\C-d")
             (if (zerop (buffer-size)) ; empty prompt
-                (setq eol t)
+                (progn
+                  (setq eol t)
+                  (ring-remove input-history 0))
               (when (not (eobp))
                 (princ delete-to-end)
                 (when (> (- (point-max) (point)) 1)
@@ -192,7 +241,9 @@
            ((or (equal chars "\C-j")
                 (equal chars "\C-m"))
             (princ "\n")
-            (setq return t))
+            (setq return t
+                  input-history-index 0)
+            (ring-remove input-history 0))
            ((equal chars "\C-c")
             (princ "\n")
             (signal 'readline-cancel nil))
@@ -231,6 +282,7 @@
                 (if (string-match-p blank-or-comment-re line)
                     ;; treat empty line like C-c
                     (signal 'readline-cancel nil)
+                  (ring-insert input-history line)
                   (princ (format "%s\n" (rep line))))
               (princ "\n")
               (setq eof t)))
