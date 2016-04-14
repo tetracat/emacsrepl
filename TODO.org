@@ -1,4 +1,4 @@
-* Basics [2/6]
+* Basics [4/6]
 
 ** TODO Modularization
 
@@ -13,7 +13,7 @@ Candidates:
 - readline.el
 - repl.el
 
-** TODO History support
+** DONE History support
 
 - Save successful (not cancelled or erroneous) to a history ring
 - Recognize =C-p= / =<up>= and =C-n= / =<down>=
@@ -38,7 +38,7 @@ to check =TERM= and disable printing them for dumb terminals.
 - Downside: other multi-byte encodings will be turned into even
   weirder gibberish than before
 
-** TODO Support all linenoise bindings
+** DONE Support all linenoise bindings
 
 - =C-t= (swap previous and current char, advance cursor by one)
 - =C-p/C-n= (prev/next history item)
