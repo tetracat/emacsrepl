@@ -1,4 +1,4 @@
-* Basics [4/6]
+* Basics [5/6]
 
 ** TODO Modularization
 
@@ -18,7 +18,7 @@ Candidates:
 - Save successful (not cancelled or erroneous) to a history ring
 - Recognize =C-p= / =<up>= and =C-n= / =<down>=
 
-** TODO Persistent history
+** DONE Persistent history
 
 - Save history to file after quitting
 - Load history from file after start
