@@ -46,7 +46,29 @@ to check =TERM= and disable printing them for dumb terminals.
 - =C-k= (delete to end)
 - =C-w= (delete previous word)
 
-* Nice to have [0/14]
+* Nice to have [0/16]
+
+** TODO Tests
+
+Something along the lines of the MAL test file format would be nice to
+have, together with some elisp and shell code for ensuring typical
+usecases don't mysteriously break down (as it is currently the case
+for =M-x ansi-term=).
+
+** TODO Install script
+
+<Earnestly> wasamasa: Imo, a better approach is to install the repl component somewhere else, like $PREFIX/lib/emacsrepl/repl.el
+<Earnestly> wasamasa: Then hardcode that path
+<wasamasa> Earnestly: so the user would need to edit PREFIX in the shell script?
+<Earnestly> wasamasa: You'd use a Makefile or some such where they can install it, the PREFIX can be sed'd in during that process
+<wasamasa> hmm
+<Earnestly> wasamasa: sed is far nicer for simple stuff, and probably complex stuff, than m4
+<Earnestly> wasamasa: https://ptpb.pw/gdvL/make all I use for taverner
+<Earnestly> wasamasa: You could just throw in a sed -i 's/PREFIX/$PREFIX' emacsrepl before the install
+<Earnestly> wasamasa: It's about as simple as this: https://ptpb.pw/Y9Tv/make
+<Earnestly> wasamasa: Where script=PREFIX/emacsrepl/repl.el or whatever path you want
+<Earnestly> Erm, PREFIX/lib/emacsrepl/repl.el
+<Earnestly> You could even abstrct /lib/ into LIBDIR like gnu autohell does, but I don't care about such opinions
 
 ** TODO Quoted insert
 
