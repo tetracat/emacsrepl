@@ -31,16 +31,6 @@ multi-byte encoding."
   :type 'boolean
   :group 'readline)
 
-;;; escape codes
-
-;; see https://github.com/antirez/linenoise and console_codes(4)
-
-(defconst rl-column-start-sequence "\e[0G")
-(defconst rl-delete-to-end-sequence "\e[0K")
-(defconst rl-retreat-cursor-sequence "\e[%sD")
-(defconst rl-advance-cursor-sequence "\e[%sC")
-(defconst rl-clear-screen-sequence "\e[H\e[2J")
-
 ;;; input
 
 (defun rl-read-byte ()
@@ -128,6 +118,15 @@ will be performed."
         (ring-insert rl-history line)
         (forward-line 1)))))
 
+;;; escape codes
+
+;; see https://github.com/antirez/linenoise and console_codes(4)
+
+(defconst rl-delete-to-end-sequence "\e[0K")
+(defconst rl-retreat-cursor-sequence "\e[%sD")
+(defconst rl-advance-cursor-sequence "\e[%sC")
+(defconst rl-clear-screen-sequence "\e[H\e[2J")
+
 ;;; main logic
 
 ;; TODO add shim for emacs 24.3
@@ -147,9 +146,9 @@ will be performed."
       (rl-ring-set rl-history rl-history-index (buffer-string))
       (setq rl-history-index (+ rl-history-index (if prev 1 -1)))
       (let ((other-item (ring-ref rl-history rl-history-index)))
-        (princ rl-column-start-sequence)
+        (when (not (bobp))
+          (princ (format rl-retreat-cursor-sequence (1- (point)))))
         (princ rl-delete-to-end-sequence)
-        (princ prompt)
         (princ other-item)
         (erase-buffer)
         (insert other-item)))))
@@ -166,8 +165,7 @@ will be performed."
 
 (defun rl-line-beginning (prompt)
   (when (not (bobp))
-    (princ rl-column-start-sequence)
-    (princ (format rl-advance-cursor-sequence (length prompt)))
+    (princ (format rl-retreat-cursor-sequence (1- (point))))
     (goto-char (point-min))))
 
 (defun rl-line-end ()
@@ -194,10 +192,10 @@ will be performed."
 
 (defun rl-delete-line (prompt)
   (when (not (zerop (buffer-size)))
-    (erase-buffer)
-    (princ rl-column-start-sequence)
-    (princ (format rl-advance-cursor-sequence (length prompt)))
-    (princ rl-delete-to-end-sequence)))
+    (when (not (bobp))
+      (princ (format rl-retreat-cursor-sequence (1- (point)))))
+    (princ rl-delete-to-end-sequence)
+    (erase-buffer)))
 
 (defun rl-delete-to-end ()
   (when (not (eobp))
