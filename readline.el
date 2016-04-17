@@ -110,7 +110,7 @@ will be performed."
 
 (defun rl-history-load (file)
   (with-temp-buffer
-    (insert-file-contents-literally file)
+    (insert-file-contents file)
     (goto-char (point-min))
     (while (not (eobp))
       (let ((line (buffer-substring (line-beginning-position)
