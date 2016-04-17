@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # emacsrepl - Interactive CLI REPL for Emacs Lisp
 
 scriptdir=${0%/*}
@@ -8,13 +8,15 @@ repl() {
     pkill -u "$USER" -P "$$" -x od
 }
 
-if [[ "$TERM" == dumb || "$TERM" == cons25 || "$TERM" == emacs ]]; then
-    emacs -Q --batch -L . --load "$scriptdir/emacsrepl.el"
-else
-    trap 'stty "$restore"' EXIT
+case $TERM in
+    dumb|cons25|emacs)
+        emacs -Q --batch -L . --load "$scriptdir/emacsrepl.el"
+        ;;
+    *)
+        trap 'stty "$restore"' EXIT
 
-    restore=$(stty -g)
-    stty raw -echo opost
+        restore=$(stty -g)
+        stty raw -echo opost
 
-    stdbuf -oL od -w1 -An -tx1 -v | repl
-fi
+        stdbuf -oL od -w1 -An -tx1 -v | repl
+esac
