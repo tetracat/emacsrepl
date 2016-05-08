@@ -15,6 +15,12 @@ Usage
 - ``cd emacsrepl``
 - ``./emacsrepl``
 
+Further Notes
+-------------
+
+See the `blog post
+<http://emacsninja.com/posts/ich-the-csi-killer.html>`_.
+
 Credits
 -------
 
