@@ -35,7 +35,7 @@
 (defvar history-file
   (let ((data-home (getenv "XDG_DATA_HOME")))
     (if (and data-home (= (aref data-home 0) ?/))
-        (concat data-home "emacsrepl/history")
+        (concat data-home "/emacsrepl/history")
       (expand-file-name "~/.local/share/emacsrepl/history"))))
 
 (defvar blank-or-comment-re
