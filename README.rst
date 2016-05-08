@@ -15,6 +15,19 @@ Usage
 - ``cd emacsrepl``
 - ``./emacsrepl``
 
+Features
+--------
+
+- Basic readline-style editing (duh)
+- Runs properly under ``M-x run-lisp``
+- Persistent history
+
+Wishlist
+--------
+
+See `TODO.org
+<https://github.com/tetracat/emacsrepl/blob/master/TODO.org#nice-to-have-016>`_.
+
 Further Notes
 -------------
 
